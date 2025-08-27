@@ -1,0 +1,61 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Collect Data (correct)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/ml/scripts/collect_data.py",
+      "args": ["--label", "correct"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Collect Data (too_close)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/ml/scripts/collect_data.py",
+      "args": ["--label", "too_close"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Collect Data (too_far)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/ml/scripts/collect_data.py",
+      "args": ["--label", "too_far"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Collect Data (head_left)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/ml/scripts/collect_data.py",
+      "args": ["--label", "head_left"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Collect Data (head_right)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/ml/scripts/collect_data.py",
+      "args": ["--label", "head_right"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Collect Data (head_up)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/ml/scripts/collect_data.py",
+      "args": ["--label", "head_up"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Collect Data (head_down)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/ml/scripts/collect_data.py",
+      "args": ["--label", "head_down"],
+      "console": "integratedTerminal"
+    }
+  ]
+}
