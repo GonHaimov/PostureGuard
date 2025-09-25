@@ -1,0 +1,20 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+Project: PostureGuard
+
+Structure:
+- backend/ → Node.js + Express + MongoDB. Currently supports register/login with MongoDB.
+- frontend/ → React (Vite). Currently has Login and Register pages connected to backend.
+- ml/ → Python + MediaPipe. Script collects CSV data for labels (correct, too_close, too_far, head_left, head_right, head_up, head_down). Currently hundreds of samples, target is thousands.
+
+Future (high level):
+- Calibration and user-specific baselines.
+- Real-time monitoring UI.
+- ML model training and integration.
+
+Notes:
+- Work will be done step by step, not all at once.
+
