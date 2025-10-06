@@ -31,9 +31,17 @@ export default function App() {
             {token ? (
               <>
                 <p>Welcome, you are logged in.</p>
-                <button className="btn logout" onClick={handleLogout}>
-                  Logout
-                </button>
+                <div className="links">
+                  <Link to="/calibration" className="btn primary">
+                    Calibration
+                  </Link>
+                  <Link to="/monitoring" className="btn primary">
+                    Start Monitoring
+                  </Link>
+                  <button className="btn logout" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </div>
               </>
             ) : (
               <>
