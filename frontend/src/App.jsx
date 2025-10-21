@@ -7,6 +7,30 @@ import background from "./assets/background.png";
 export default function App() {
   const token = localStorage.getItem("token");
 
+  // Extract username from JWT token
+  const getUsername = () => {
+    if (!token) return null;
+    try {
+      // JWT tokens have 3 parts separated by dots: header.payload.signature
+      const payload = token.split(".")[1];
+      // Decode base64 payload
+      const decoded = JSON.parse(atob(payload));
+      return decoded.username;
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      return null;
+    }
+  };
+
+  // Capitalize first letter of username
+  const capitalizeFirstLetter = (str) => {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
+  const username = getUsername();
+  const capitalizedUsername = capitalizeFirstLetter(username);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.href = "/login";
@@ -30,7 +54,7 @@ export default function App() {
           <div className="card">
             {token ? (
               <>
-                <p>Welcome, you are logged in.</p>
+                <p>Welcome {capitalizedUsername}, you are logged in.</p>
                 <div className="links">
                   <Link to="/calibration" className="btn primary">
                     Calibration

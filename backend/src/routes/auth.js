@@ -8,11 +8,11 @@ const router = express.Router();
 router.post("/register", async (req,res) => {
   try{
     const { username, password } = req.body || {};
-    if(!username || !password)
-         return res.status(400).json({error:"username and password are required"});
+    if (!username || !password)
+         return res.status(400).json({ error:"username and password are required" });
 
-    if(password.length < 6)
-         return res.status(400).json({error:"password too short"});
+    if (password.length < 6)
+         return res.status(400).json({ error:"password too short" });
 
     const exists = await User.findOne({ username: username.toLowerCase().trim() });
     if(exists)

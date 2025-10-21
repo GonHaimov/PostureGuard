@@ -1,4 +1,4 @@
-/* רקע */
+/* Background */
 .home-container {
   min-height: 100vh;
   background-size: cover;
@@ -8,18 +8,20 @@
   flex-direction: column;
 }
 
-/* שכבת שקיפות מעל הרקע */
+/* Transparency layer over background */
 .overlay {
   flex: 1;
-  background: rgba(255, 255, 255, 0.75); /* בהיר יותר */
+  background: rgba(255, 255, 255, 0.75); /* Brighter */
   backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* כותרת */
 .header {
+  display: flex;
+  flex-direction: column; /* Positions elements one below the other */
+  align-items: center; /* Centers the content */
   text-align: center;
   padding: 2rem 1rem;
 }
@@ -39,9 +41,10 @@
 .subtitle {
   font-size: 1.2rem;
   color: #4a5568;
+  margin: 0.5rem 0 2rem 0; /* Added bottom margin to push it down */
 }
 
-/* תוכן */
+/* Content */
 .content {
   flex: 1;
   display: flex;
@@ -57,7 +60,16 @@
   text-align: center;
 }
 
-/* כפתורים */
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+/* Buttons */
 .btn {
   display: inline-block;
   padding: 0.8rem 1.5rem;
@@ -67,6 +79,7 @@
   transition: 0.3s;
   cursor: pointer;
   margin: 0.5rem;
+  border: none;
 }
 
 .btn.primary {
@@ -98,7 +111,7 @@
   background: #c53030;
 }
 
-/* פוטר */
+/* Footer */
 .footer {
   text-align: center;
   padding: 1rem;

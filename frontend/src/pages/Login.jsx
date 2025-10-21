@@ -15,7 +15,7 @@ export default function Login() {
     e.preventDefault();
     setMsg("...");
     try {
-      const r = await fetch(`${API}/auth/login`, {
+      const r = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
