@@ -3,24 +3,25 @@ import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
 import "./Monitoring.css";
 
 export default function Monitoring() {
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
+  const videoRef = useRef(null); // reference to the video element
+  const canvasRef = useRef(null); // reference to the canvas element
   const [videoElementReady, setVideoElementReady] = useState(false);
-  const faceLandmarkerRef = useRef(null);
-  const animationFrameRef = useRef(null);
-  const frameBufferRef = useRef([]);
-  const lastAlertTimeRef = useRef(0);
+  const faceLandmarkerRef = useRef(null); // reference to the face landmarker object
+  const animationFrameRef = useRef(null); // reference to the animation frame
+  const frameBufferRef = useRef([]); // reference to the frame buffer
+  const lastAlertTimeRef = useRef(0); // reference to the last alert time
   const alertTimeoutRef = useRef(null);
-  const sessionIdRef = useRef(null);
-  const frameCountRef = useRef(0);
+  const sessionIdRef = useRef(null); // reference to the session ID
+  const frameCountRef = useRef(0); // reference to the frame count
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // state to track if the component is loading
   const [currentPosture, setCurrentPosture] = useState("correct");
-  const [alertMessage, setAlertMessage] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState(""); // state to track the alert message
+  const [showAlert, setShowAlert] = useState(false); // state to track if the alert is shown
   const [error, setError] = useState("");
-  const [debugInfo, setDebugInfo] = useState("");
+  const [debugInfo, setDebugInfo] = useState(""); // state to track the debug information
   const [sessionStats, setSessionStats] = useState({
+    // state to track the session statistics
     totalFrames: 0,
     correctFrames: 0,
     incorrectFrames: 0,
@@ -737,8 +738,8 @@ export default function Monitoring() {
       <div className="monitoring-content">
         <div className="header">
           <h1>PostureGuard - Live Monitoring</h1>
-          <button onClick={handleBack} className="btn secondary">
-            Back to Home
+          <button onClick={handleStopMonitoring} className="btn primary">
+            Stop Monitoring
           </button>
         </div>
 
@@ -827,13 +828,6 @@ export default function Monitoring() {
                   </span>
                 </div>
               </div>
-            </div>
-
-            {/* Control Buttons */}
-            <div className="button-group">
-              <button onClick={handleStopMonitoring} className="btn primary">
-                Stop Monitoring
-              </button>
             </div>
           </>
         )}

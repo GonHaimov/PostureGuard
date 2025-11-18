@@ -15,12 +15,12 @@ export default function Login() {
     e.preventDefault();
     setMsg("...");
     try {
-      const r = await fetch(`${API}/api/auth/login`, {
+      const r = await fetch(`${API}/api/auth/login`, { // r is the response from the server
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
-      const data = await r.json();
+      const data = await r.json(); // data is the response from the server
       if (!r.ok) return setMsg(data.error || "error");
       localStorage.setItem("token", data.token);
       setMsg("ok");

@@ -13,8 +13,8 @@ export const authenticateToken = (req, res, next) => {
       if (err) {
         return res.status(403).json({ error: "Invalid or expired token" });
       }
-      req.user = user;
-      next();
+      req.user = user; 
+      next(); // next is a function that allows the request to continue to the next middleware or route handler
     });
   } catch (e) {
     return res.status(500).json({ error: "Server error" });

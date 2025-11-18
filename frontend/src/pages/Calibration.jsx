@@ -5,9 +5,9 @@ import "./Calibration.css";
 export default function Calibration() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const faceLandmarkerRef = useRef(null);
-  const animationFrameRef = useRef(null);
-  const capturedDataRef = useRef([]);
+  const faceLandmarkerRef = useRef(null); // mediapipe face landmarker object
+  const animationFrameRef = useRef(null); // reference to the animation frame
+  const capturedDataRef = useRef([]); // reference to the captured data
 
   const [isLoading, setIsLoading] = useState(true);
   const [isCalibrating, setIsCalibrating] = useState(false);
@@ -17,6 +17,13 @@ export default function Calibration() {
 
   const TARGET_FRAMES = 100;
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+  const CALIBRATION_BOUNDS = {
+    faceAreaRatio: { min: 0.04, max: 0.11 },
+    eyeDistanceRatio: { min: 0.09, max: 0.22 },
+    faceHeightRatio: { min: 0.28, max: 0.48 },
+    headTiltHorizontalMaxDeviation: 12, // degrees from vertical (≈90°)
+    headTiltVertical: { min: -0.06, max: 0.06 },
+  };
 
   // Helper function to select the largest detected face
   const selectLargestFace = (faceLandmarks, videoWidth, videoHeight) => {
@@ -43,54 +50,91 @@ export default function Calibration() {
     return largestFace;
   };
 
-  // Validate calibration quality
-  const validateCalibrationQuality = (features) => {
-    const { face_area_ratio, eye_distance_px, face_height_px } = features;
+  // Validate calibration quality using normalized bounds derived from the dataset
+  const validateCalibrationQuality = (features, videoWidth, videoHeight) => {
+    const { face_area_ratio, eye_distance_px, face_height_px, head_tilt_h, head_tilt_v } =
+      features;
 
-    // Check if face is too small (too far from camera)
-    if (face_area_ratio < 0.02) {
+    if (!videoWidth || !videoHeight) {
       return {
         valid: false,
-        message: "Please move closer to the camera. Your face is too small.",
+        message: "Camera feed is not ready yet. Please wait a moment.",
       };
     }
 
-    // Check if face is too large (too close to camera)
-    if (face_area_ratio > 0.15) {
+    const normalizedEyeDistance = eye_distance_px / videoWidth;
+    const normalizedFaceHeight = face_height_px / videoHeight;
+    const faceAreaBounds = CALIBRATION_BOUNDS.faceAreaRatio;
+    const eyeBounds = CALIBRATION_BOUNDS.eyeDistanceRatio;
+    const heightBounds = CALIBRATION_BOUNDS.faceHeightRatio;
+    const tiltBounds = CALIBRATION_BOUNDS.headTiltVertical;
+
+    if (face_area_ratio < faceAreaBounds.min) {
       return {
         valid: false,
-        message: "Please move back from the camera. Your face is too large.",
+        message:
+          "You're sitting too far away. Move closer until your face fills more of the frame.",
       };
     }
 
-    // Check if eye distance is reasonable (not too small or too large)
-    if (eye_distance_px < 30) {
+    if (face_area_ratio > faceAreaBounds.max) {
       return {
         valid: false,
-        message: "Please ensure your face is clearly visible and well-lit.",
+        message:
+          "You're sitting too close. Move back slightly so your face fits inside the guide.",
       };
     }
 
-    if (eye_distance_px > 150) {
+    if (normalizedEyeDistance < eyeBounds.min || normalizedFaceHeight < heightBounds.min) {
       return {
         valid: false,
-        message: "Please move closer to the camera for better detection.",
+        message:
+          "Make sure your full face is centered in good lighting and move closer slightly.",
       };
     }
 
-    // Check if face height is reasonable
-    if (face_height_px < 50) {
+    if (normalizedEyeDistance > eyeBounds.max || normalizedFaceHeight > heightBounds.max) {
       return {
         valid: false,
-        message: "Please ensure your full face is visible in the frame.",
+        message: "Move back a little—the camera needs to see your full face.",
       };
     }
 
-    if (face_height_px > 300) {
-      return { valid: false, message: "Please move back from the camera." };
+    const horizontalDeviation = Math.abs(90 - head_tilt_h);
+    if (horizontalDeviation > CALIBRATION_BOUNDS.headTiltHorizontalMaxDeviation) {
+      return {
+        valid: false,
+        message:
+          head_tilt_h < 90
+            ? "Your head is tilted to the right. Sit up straight before calibrating."
+            : "Your head is tilted to the left. Sit up straight before calibrating.",
+      };
+    }
+
+    if (head_tilt_v < tiltBounds.min) {
+      return {
+        valid: false,
+        message: "You're leaning back. Bring your chin down slightly and face forward.",
+      };
+    }
+
+    if (head_tilt_v > tiltBounds.max) {
+      return {
+        valid: false,
+        message: "You're leaning forward. Lift your head slightly and face forward.",
+      };
     }
 
     return { valid: true, message: "Calibration quality looks good!" };
+  };
+
+  const isCameraActive = () => {
+    const videoElement = videoRef.current;
+    if (!videoElement) return false;
+    const stream = videoElement.srcObject;
+    if (!stream) return false;
+    const tracks = stream.getVideoTracks ? stream.getVideoTracks() : [];
+    return tracks.length > 0 && tracks[0].readyState === "live";
   };
 
   useEffect(() => {
@@ -228,6 +272,12 @@ export default function Calibration() {
       return;
     }
 
+    if (!isCameraActive() || videoRef.current.readyState < 2) {
+      setError("Camera is off. Please turn it on and allow access to continue.");
+      setMessage("Turn on your camera, then press Start Calibration again.");
+      return;
+    }
+
     setIsCalibrating(true);
     setMessage("Calibrating... Keep your face steady inside the circle");
     setProgress(0);
@@ -263,7 +313,11 @@ export default function Calibration() {
             const features = computeFaceFeatures(selectedFace);
             if (features) {
               // Validate calibration quality
-              const validation = validateCalibrationQuality(features);
+              const validation = validateCalibrationQuality(
+                features,
+                videoWidth,
+                videoHeight
+              );
 
               if (validation.valid) {
                 capturedDataRef.current.push(features);

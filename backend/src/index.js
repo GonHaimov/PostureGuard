@@ -16,8 +16,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 
 const { PORT = 4000, MONGO_URI } = process.env;
-mongoose
-  .connect(MONGO_URI)
+mongoose.connect(MONGO_URI)
   .then(() => {
     app.listen(PORT, () => console.log("API on http://localhost:" + PORT));
   })
